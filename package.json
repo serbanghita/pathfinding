@@ -1,8 +1,12 @@
 {
-  "name": "@serbanghita/pathfinding",
+  "name": "@serbanghita-gamedev/pathfinding",
   "description": "Pathfinding library that implements A* and returns the full path or only the waypoints.",
   "keywords": [
-    "pathfinding"
+    "pathfinding",
+    "a star",
+    "path finding",
+    "a*",
+    "gamedev"
   ],
   "version": "1.0.0",
   "author": "Serban Ghita <serbanghita@gmail.com> (https://ghita.org)",

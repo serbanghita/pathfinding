@@ -15,7 +15,7 @@ This library provides you with:
 ### Install
 
 ```
-npm install @serbanghita/pathfinding
+npm install @serbanghita-gamedev/pathfinding
 ```
 
 ### Usage
