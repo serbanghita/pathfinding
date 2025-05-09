@@ -8,7 +8,7 @@
     "a*",
     "gamedev"
   ],
-  "version": "1.0.0",
+  "version": "0.0.1",
   "author": "Serban Ghita <serbanghita@gmail.com> (https://ghita.org)",
   "license": "MIT",
   "publishConfig": {
