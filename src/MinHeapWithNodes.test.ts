@@ -1,4 +1,4 @@
-import MinHeapWithNodes from "./MinHeapWithNodes";
+import MinHeapWithNodes from "./MinHeapWithNodes.ts";
 
 describe("MinHeapWithNodes", () => {
   it("constructor", () => {

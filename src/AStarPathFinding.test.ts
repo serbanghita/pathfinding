@@ -1,6 +1,4 @@
-import AStarPathFinding, {
-  AStarPathFindingSearchType,
-} from "./AStarPathFinding";
+import AStarPathFinding, { AStarPathFindingSearchType } from "./AStarPathFinding.ts";
 
 describe("AStarPathFinding", () => {
   describe("constructor", () => {
@@ -225,15 +223,11 @@ describe("AStarPathFinding", () => {
       expect(result).toBe(false);
 
       result = aStar.search();
-      expect([...aStar.visitedTiles]).toEqual([
-        0, 5, 10, 11, 12, 7, 2, 3, 4, 9,
-      ]);
+      expect([...aStar.visitedTiles]).toEqual([0, 5, 10, 11, 12, 7, 2, 3, 4, 9]);
       expect(result).toBe(false);
 
       result = aStar.search();
-      expect([...aStar.visitedTiles]).toEqual([
-        0, 5, 10, 11, 12, 7, 2, 3, 4, 9, 14,
-      ]);
+      expect([...aStar.visitedTiles]).toEqual([0, 5, 10, 11, 12, 7, 2, 3, 4, 9, 14]);
       expect(result).toBe(true);
     });
     test("success - 2D matrix - only one path possible", () => {
@@ -284,15 +278,11 @@ describe("AStarPathFinding", () => {
       expect(result).toBe(false);
 
       result = aStar.search();
-      expect([...aStar.visitedTiles]).toEqual([
-        0, 5, 10, 11, 12, 7, 2, 3, 4, 9,
-      ]);
+      expect([...aStar.visitedTiles]).toEqual([0, 5, 10, 11, 12, 7, 2, 3, 4, 9]);
       expect(result).toBe(false);
 
       result = aStar.search();
-      expect([...aStar.visitedTiles]).toEqual([
-        0, 5, 10, 11, 12, 7, 2, 3, 4, 9, 14,
-      ]);
+      expect([...aStar.visitedTiles]).toEqual([0, 5, 10, 11, 12, 7, 2, 3, 4, 9, 14]);
       expect(result).toBe(true);
     });
   });
@@ -310,9 +300,7 @@ describe("AStarPathFinding", () => {
         finishCoordinates: { x: 4, y: 2 },
       });
       const result = aStar.search();
-      expect([...aStar.visitedTiles]).toEqual([
-        0, 5, 10, 11, 12, 7, 2, 3, 4, 9, 14,
-      ]);
+      expect([...aStar.visitedTiles]).toEqual([0, 5, 10, 11, 12, 7, 2, 3, 4, 9, 14]);
       expect(result).toBe(true);
     });
   });
@@ -323,20 +311,12 @@ describe("AStarPathFinding", () => {
       beforeEach(() => {
         aStar = new AStarPathFinding({
           matrix1D: [
-            5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 0,
-            0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 5, 5, 0, 0, 0, 0, 5,
-            0, 0, 5, 0, 5, 5, 5, 5, 0, 5, 0, 5, 0, 5, 5, 0, 0, 0, 0, 5, 0, 0, 5,
-            0, 5, 0, 0, 5, 0, 5, 0, 5, 0, 5, 5, 0, 0, 0, 0, 5, 0, 0, 5, 0, 5, 0,
-            0, 5, 0, 5, 0, 0, 5, 5, 5, 0, 0, 0, 0, 5, 0, 5, 5, 0, 5, 5, 0, 5, 5,
-            5, 0, 5, 0, 5, 5, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 5, 0, 0, 0, 0, 5, 5,
-            0, 5, 5, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 5, 0, 0, 0, 0, 5, 5, 0, 5, 5,
-            0, 0, 0, 0, 5, 0, 5, 5, 5, 5, 5, 5, 5, 5, 0, 5, 0, 0, 5, 5, 0, 0, 0,
-            0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 5, 5,
-            5, 5, 5, 5, 5, 0, 0, 5, 0, 0, 0, 0, 5, 5, 0, 0, 0, 5, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 5, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 5,
-            5, 5, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
-            5,
+            5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 5, 5, 0, 0, 0, 0, 5, 0, 0, 5, 0, 5, 5, 5, 5, 0, 5,
+            0, 5, 0, 5, 5, 0, 0, 0, 0, 5, 0, 0, 5, 0, 5, 0, 0, 5, 0, 5, 0, 5, 0, 5, 5, 0, 0, 0, 0, 5, 0, 0, 5, 0, 5, 0, 0, 5, 0, 5, 0, 0, 5, 5, 5, 0, 0, 0, 0, 5, 0, 5, 5, 0, 5, 5,
+            0, 5, 5, 5, 0, 5, 0, 5, 5, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 5, 0, 0, 0, 0, 5, 5, 0, 5, 5, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 5, 0, 0, 0, 0, 5, 5, 0, 5, 5, 0, 0, 0, 0, 5, 0, 5,
+            5, 5, 5, 5, 5, 5, 5, 0, 5, 0, 0, 5, 5, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 0, 0, 5, 0, 0, 0, 0, 5, 5, 0, 0, 0,
+            5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 0, 0, 0, 0, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5,
+            5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
           ],
           matrixWidth: 20,
           matrixHeight: 15,

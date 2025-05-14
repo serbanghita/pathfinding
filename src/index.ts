@@ -1,7 +1,3 @@
-export {
-  default as AStarPathFinding,
-  AStarPathFindingInit,
-  AStarPathFindingSearchType,
-  MatrixTileCoordinates,
-} from "./AStarPathFinding";
-export { default as MinHeapWithNodes, MinHeapNode } from "./MinHeapWithNodes";
+export * from "./AStarPathFinding.ts";
+export { default as AStarPathFinding } from "./AStarPathFinding.ts";
+export * from "./MinHeapWithNodes.ts";

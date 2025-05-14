@@ -1,6 +1,6 @@
 # Pathfinding
 
-> Pathfinding library that implements A\* with Euclidean distance.
+> Pathfinding library that implements A\* with Euclidean distance.  
 > On success it can return the full backtracked path or only the waypoints.
 
 This library provides you with:
@@ -10,7 +10,10 @@ This library provides you with:
 - logic can run **in a loop** (step by step, e.g. only 30 times per second) or **continuous** (e.g. Webworker)
 - hooks like `onInsertQueue(node)` on `onSuccess`.
 
-![](./demo-astar.gif)
+| Result type           | Demo                                       |
+| --------------------- | ------------------------------------------ |
+| `FULL_PATH_ARRAY`     | ![](./resources/pathfinding-fullpath.gif)  |
+| `WAYPOINT_PATH_ARRAY` | ![](./resources/pathfinding-waypoints.gif) |
 
 ### Install
 
@@ -18,21 +21,7 @@ This library provides you with:
 npm install @serbanghita-gamedev/pathfinding
 ```
 
-### Usage
-
-| Config option     | Type                     | Description                                                                   |
-| ----------------- | ------------------------ | ----------------------------------------------------------------------------- |
-| matrix2D          | `number[][]`             | A 2d matrix.                                                                  |
-| matrix1D          | `number[]`               | A 1d matrix (flat array).                                                     |
-| matrixWidth       | `number`                 | Matrix width, mandatory for `matrix1D`.                                       |
-| matrixHeight      | `number`                 | Matrix height, mandatory for `matrix1D`.                                      |
-| searchType        | `enum`                   | `AStarPathFindingSearchType.BY_STEP`, `AStarPathFindingSearchType.CONTINUOUS` |
-| startCoordinates  | `{x: number, y: number}` | Starting point                                                                |
-| finishCoordinates | `{x: number, y: number}` | End goal point                                                                |
-
-#### STEP method
-
-> Recommended for loops, batches (e.g. game loop)
+### Example
 
 ```ts
 const aStar = new AStarPathFinding({
@@ -50,21 +39,32 @@ const aStar = new AStarPathFinding({
 let result = aStar.search();
 ```
 
-#### CONTINUOUS method
+### Config
 
-> Recommended for separate thread (e.g. Webworker)
+| Config option     | Type                                   | Description                                                                   |
+| ----------------- | -------------------------------------- | ----------------------------------------------------------------------------- |
+| matrix2D          | `number[][]`                           | A 2d matrix.                                                                  |
+| matrix1D          | `number[]`                             | A 1d matrix (flat array).                                                     |
+| matrixWidth       | `number`                               | Matrix width, mandatory for `matrix1D`.                                       |
+| matrixHeight      | `number`                               | Matrix height, mandatory for `matrix1D`.                                      |
+| searchType        | `enum`                                 | `AStarPathFindingSearchType.BY_STEP`, `AStarPathFindingSearchType.CONTINUOUS` |
+| startCoordinates  | `{x: number, y: number}`               | Starting point                                                                |
+| finishCoordinates | `{x: number, y: number}`               | End goal point                                                                |
+| onInsertQueue     | `function(node: MinHeapNode): void`    | Callback function executing for each node inserted in the MinHeap             |
+| onSuccess         | `function(foundPath: number[]) : void` | Callback function executing when a successful path has been found.            |
 
-```ts
-const aStar = new AStarPathFinding({
-  matrix2D: [
-    [0, 1, 0, 0, 0],
-    [0, 1, 0, 1, 0],
-    [0, 0, 0, 1, 0],
-  ],
-  matrixTileSize: 1,
-  searchType: AStarPathFindingSearchType.CONTINUOUS, // <--- This
-  startCoordinates: { x: 0, y: 0 },
-  finishCoordinates: { x: 4, y: 2 },
-});
-const result = aStar.search();
-```
+You can use the library in two modes:
+
+- `BY_STEP` - recommended for loops, batches (e.g. game loop). This is when you're executing `aStar.search()` on each tick.
+- `CONTINUOUS` - Recommended for separate thread (e.g. WebWorker). This is for when you're executing `aStar.search()` in one blocking operation.
+
+### Contributing
+
+- Always include tests
+- Make sure you run `vitest --watch=false --coverage`
+- Lint the code with `eslint ./src`
+- Open a PR, assign `@serbanghita` as reviewer
+
+### Credits
+
+- [Serban Ghita](https://github.com/serbanghita)
