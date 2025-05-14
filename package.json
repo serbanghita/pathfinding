@@ -21,7 +21,8 @@
     "build": "esbuild ./src/index.ts --bundle --outfile=dist/pathfinding.js",
     "test": "vitest --watch=false --coverage",
     "lint": "eslint ./src",
-    "prepare": "husky"
+    "prepare": "husky",
+    "release:minor": "npm version minor && git push && git push --tags && npm publish"
   },
   "devDependencies": {
     "@eslint/js": "9.26.0",
