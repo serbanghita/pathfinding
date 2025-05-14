@@ -250,9 +250,9 @@ export default class AStarPathFinding {
       const cameFrom: number = this.cameFromTiles.get(current) as number;
 
       const cameFromXY = this.getCoordinatesFromTileValue(cameFrom);
-      const lasAddedXY = this.getCoordinatesFromTileValue(lastAdded);
+      const lastAddedXY = this.getCoordinatesFromTileValue(lastAdded);
       // Check if the current tile has changed direction (row or column).
-      if (cameFromXY.x !== lasAddedXY.x && cameFromXY.y !== lasAddedXY.y) {
+      if (cameFromXY.x !== lastAddedXY.x && cameFromXY.y !== lastAddedXY.y) {
         lastAdded = cameFrom;
         path.unshift(current);
       }
