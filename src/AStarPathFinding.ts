@@ -24,6 +24,11 @@ export enum AStarPathFindingSearchStatus {
   NOT_FOUND = 0x4,
 }
 
+export enum AStarPathFindingDistanceComputeType {
+  EUCLIDEAN = 0x1,
+  MANHATTAN = 0x2,
+}
+
 export type AStarPathFindingInit = {
   // 2d matrix.
   matrix2D?: number[][];
@@ -37,6 +42,7 @@ export type AStarPathFindingInit = {
   finishCoordinates: MatrixTileCoordinates;
   searchType?: AStarPathFindingSearchType;
   resultType?: AStarPathFindingResultType;
+  distanceComputeType?: AStarPathFindingDistanceComputeType;
 
   onInsertQueue?: (node: MinHeapNode) => void;
   onSuccess?: (result: number[]) => void;
@@ -61,8 +67,9 @@ export default class AStarPathFinding {
   private matrix1D: number[] = [];
   private matrixSize!: number;
 
-  private searchType: AStarPathFindingSearchType = AStarPathFindingSearchType.CONTINUOUS;
-  private resultType: AStarPathFindingResultType = AStarPathFindingResultType.FULL_PATH_ARRAY;
+  public searchType: AStarPathFindingSearchType = AStarPathFindingSearchType.CONTINUOUS;
+  public resultType: AStarPathFindingResultType = AStarPathFindingResultType.FULL_PATH_ARRAY;
+  public distanceComputeType: AStarPathFindingDistanceComputeType = AStarPathFindingDistanceComputeType.MANHATTAN;
 
   private startCoordinates!: MatrixTileCoordinates;
   public startTileValue!: number;
@@ -124,6 +131,9 @@ export default class AStarPathFinding {
     }
     if (config.resultType) {
       this.resultType = config.resultType;
+    }
+    if (config.distanceComputeType) {
+      this.distanceComputeType = config.distanceComputeType;
     }
 
     if (config.onInsertQueue) {
@@ -297,11 +307,25 @@ export default class AStarPathFinding {
     };
   }
 
-  public computeEuclideanDistanceBetweenTwoTiles(start: number, finish: number): number {
+  public calculateDistanceBetweenTwoTiles(start: number, finish: number): number {
     const startCoords = this.getCoordinatesFromTileValue(start);
     const finishCoords = this.getCoordinatesFromTileValue(finish);
 
-    return Math.sqrt(Math.pow(startCoords.x - finishCoords.x, 2) + Math.pow(startCoords.y - finishCoords.y, 2));
+    if (this.distanceComputeType === AStarPathFindingDistanceComputeType.EUCLIDEAN) {
+      return AStarPathFinding.calculateEuclideanDistance(startCoords, finishCoords);
+    } else if (this.distanceComputeType === AStarPathFindingDistanceComputeType.MANHATTAN) {
+      return AStarPathFinding.calculateManhattanDistance(startCoords, finishCoords);
+    }
+
+    throw new Error(`Unrecognised type of distance calculation: ${this.distanceComputeType}`);
+  }
+
+  public static calculateEuclideanDistance(startPoint: { x: number; y: number }, finishPoint: { x: number; y: number }): number {
+    return Math.sqrt(Math.pow(startPoint.x - finishPoint.x, 2) + Math.pow(startPoint.y - finishPoint.y, 2));
+  }
+
+  public static calculateManhattanDistance(startPoint: { x: number; y: number }, finishPoint: { x: number; y: number }): number {
+    return Math.abs(startPoint.x - finishPoint.x) + Math.abs(startPoint.y - finishPoint.y);
   }
 
   private computeFutureTileValueAndCostFromDirection(node: MinHeapNode, [directionX, directionY]: [number, number]): MinHeapNode | null {
@@ -311,7 +335,7 @@ export default class AStarPathFinding {
     if (directionX !== 0) {
       futureTileValue = node.value + directionX;
       // Calculate this based on heuristic?
-      futureCost = this.computeEuclideanDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
+      futureCost = this.calculateDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
       // console.log("futureCost", futureCost);
 
       // Check out of bounds.
@@ -321,7 +345,7 @@ export default class AStarPathFinding {
     } else if (directionY !== 0) {
       futureTileValue = node.value + directionY * this.matrixWidth;
       // Calculate this based on heuristic?
-      futureCost = this.computeEuclideanDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
+      futureCost = this.calculateDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
       // console.log("futureCost", futureCost);
     } else {
       return null;
