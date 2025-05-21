@@ -1,4 +1,5 @@
 import MinHeapWithNodes, { MinHeapNode } from "./MinHeapWithNodes.ts";
+import { DistanceStrategy, ManhattanDistance } from "./DistanceStrategy.js";
 
 const directions: [number, number][] = [
   [-1, 0], // left
@@ -24,11 +25,6 @@ export enum AStarPathFindingSearchStatus {
   NOT_FOUND = 0x4,
 }
 
-export enum AStarPathFindingDistanceComputeType {
-  EUCLIDEAN = 0x1,
-  MANHATTAN = 0x2,
-}
-
 export type AStarPathFindingInit = {
   // 2d matrix.
   matrix2D?: number[][];
@@ -42,7 +38,7 @@ export type AStarPathFindingInit = {
   finishCoordinates: MatrixTileCoordinates;
   searchType?: AStarPathFindingSearchType;
   resultType?: AStarPathFindingResultType;
-  distanceComputeType?: AStarPathFindingDistanceComputeType;
+  distanceStrategy?: DistanceStrategy;
 
   onInsertQueue?: (node: MinHeapNode) => void;
   onSuccess?: (result: number[]) => void;
@@ -60,24 +56,19 @@ export default class AStarPathFinding {
   public cameFromTiles: Map<number, number> = new Map();
   // The path found on success.
   public path: number[] = [];
-
   private matrixWidth!: number;
   private matrixHeight!: number;
   private matrix2D: number[][] = [];
   private matrix1D: number[] = [];
   private matrixSize!: number;
-
   public searchType: AStarPathFindingSearchType = AStarPathFindingSearchType.CONTINUOUS;
   public resultType: AStarPathFindingResultType = AStarPathFindingResultType.FULL_PATH_ARRAY;
-  public distanceComputeType: AStarPathFindingDistanceComputeType = AStarPathFindingDistanceComputeType.MANHATTAN;
-
+  public distanceStrategy: DistanceStrategy = new ManhattanDistance();
   private startCoordinates!: MatrixTileCoordinates;
   public startTileValue!: number;
   private finishCoordinates!: MatrixTileCoordinates;
   public finishTileValue!: number;
-
   public status: AStarPathFindingSearchStatus = AStarPathFindingSearchStatus.INIT;
-
   private onInsertQueue: (node: MinHeapNode) => void = () => undefined;
   private onSuccess: (foundPath: number[]) => void = () => undefined;
 
@@ -132,8 +123,9 @@ export default class AStarPathFinding {
     if (config.resultType) {
       this.resultType = config.resultType;
     }
-    if (config.distanceComputeType) {
-      this.distanceComputeType = config.distanceComputeType;
+    // Duck type check of DistanceStrategy since types are not available at runtime.
+    if (config.distanceStrategy && typeof config.distanceStrategy.calculate === "function") {
+      this.distanceStrategy = config.distanceStrategy;
     }
 
     if (config.onInsertQueue) {
@@ -307,25 +299,16 @@ export default class AStarPathFinding {
     };
   }
 
+  /**
+   * Calculates the distance between two tiles based on Euclidean or Manhattan distance.
+   * @param start
+   * @param finish
+   */
   public calculateDistanceBetweenTwoTiles(start: number, finish: number): number {
     const startCoords = this.getCoordinatesFromTileValue(start);
     const finishCoords = this.getCoordinatesFromTileValue(finish);
 
-    if (this.distanceComputeType === AStarPathFindingDistanceComputeType.EUCLIDEAN) {
-      return AStarPathFinding.calculateEuclideanDistance(startCoords, finishCoords);
-    } else if (this.distanceComputeType === AStarPathFindingDistanceComputeType.MANHATTAN) {
-      return AStarPathFinding.calculateManhattanDistance(startCoords, finishCoords);
-    }
-
-    throw new Error(`Unrecognised type of distance calculation: ${this.distanceComputeType}`);
-  }
-
-  public static calculateEuclideanDistance(startPoint: { x: number; y: number }, finishPoint: { x: number; y: number }): number {
-    return Math.sqrt(Math.pow(startPoint.x - finishPoint.x, 2) + Math.pow(startPoint.y - finishPoint.y, 2));
-  }
-
-  public static calculateManhattanDistance(startPoint: { x: number; y: number }, finishPoint: { x: number; y: number }): number {
-    return Math.abs(startPoint.x - finishPoint.x) + Math.abs(startPoint.y - finishPoint.y);
+    return this.distanceStrategy.calculate(startCoords, finishCoords);
   }
 
   private computeFutureTileValueAndCostFromDirection(node: MinHeapNode, [directionX, directionY]: [number, number]): MinHeapNode | null {
