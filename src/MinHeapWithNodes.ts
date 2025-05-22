@@ -64,30 +64,27 @@ export default class MinHeapWithNodes {
   }
 
   private bubbleDown(node: MinHeapNode, nodeIndex: number): void {
-    // If it's the last node, then stop processing.
-    if (nodeIndex === this.heap.length - 1) {
-      return;
-    }
+    while (true) {
+      const leftChildIndex = nodeIndex * 2 + 1;
+      const rightChildIndex = leftChildIndex + 1;
 
-    const leftChildIndex = nodeIndex * 2 + 1;
-    const leftChild = this.heap[leftChildIndex];
-    const rightChildIndex = nodeIndex * 2 + 2;
-    const rightChild = this.heap[rightChildIndex];
+      let smallest = nodeIndex;
 
-    if (leftChild && node.cost > leftChild.cost) {
-      // Swap nodes.
-      this.heap[nodeIndex] = leftChild;
-      this.heap[leftChildIndex] = node;
-      return this.bubbleDown(this.heap[leftChildIndex], leftChildIndex);
-    }
+      if (leftChildIndex < this.heap.length && this.heap[leftChildIndex].cost < this.heap[smallest].cost) {
+        smallest = leftChildIndex;
+      }
 
-    if (rightChild && node.cost > rightChild.cost) {
-      // Swap nodes.
-      this.heap[nodeIndex] = rightChild;
-      this.heap[rightChildIndex] = node;
-      return this.bubbleDown(this.heap[rightChildIndex], rightChildIndex);
+      if (rightChildIndex < this.heap.length && this.heap[rightChildIndex].cost < this.heap[smallest].cost) {
+        smallest = rightChildIndex;
+      }
+
+      if (smallest === nodeIndex) break;
+
+      // Swap
+      [this.heap[nodeIndex], this.heap[smallest]] = [this.heap[smallest], this.heap[nodeIndex]];
+      nodeIndex = smallest;
     }
-  }
+  } // test
 
   private bubbleUp(node: MinHeapNode, nodeIndex: number): void {
     // If it's root node, then stop processing.
