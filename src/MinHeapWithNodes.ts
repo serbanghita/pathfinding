@@ -28,7 +28,6 @@ export default class MinHeapWithNodes {
 
   public includes(nodeValue: number): boolean {
     return this.nodeValueSet.has(nodeValue);
-    // return !!this.heap.find((node) => node.value === nodeValue);
   }
 
   private insertAll(arr: MinHeapNode[]) {

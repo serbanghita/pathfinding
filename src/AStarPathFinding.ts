@@ -1,5 +1,6 @@
 import MinHeapWithNodes, { MinHeapNode } from "./MinHeapWithNodes.ts";
-import { DistanceStrategy, ManhattanDistance } from "./DistanceStrategy.js";
+import { DistanceStrategy, ManhattanDistance } from "./DistanceStrategy.ts";
+import { isNumber } from "./utils.ts";
 
 const directions: [number, number][] = [
   [-1, 0], // left
@@ -61,9 +62,9 @@ export default class AStarPathFinding {
   private matrix2D: number[][] = [];
   private matrix1D: number[] = [];
   private matrixSize!: number;
-  public searchType: AStarPathFindingSearchType = AStarPathFindingSearchType.CONTINUOUS;
-  public resultType: AStarPathFindingResultType = AStarPathFindingResultType.FULL_PATH_ARRAY;
-  public distanceStrategy: DistanceStrategy = new ManhattanDistance();
+  private searchType: AStarPathFindingSearchType = AStarPathFindingSearchType.CONTINUOUS;
+  private resultType: AStarPathFindingResultType = AStarPathFindingResultType.FULL_PATH_ARRAY;
+  private distanceStrategy: DistanceStrategy = new ManhattanDistance();
   private startCoordinates!: MatrixTileCoordinates;
   public startTileValue!: number;
   private finishCoordinates!: MatrixTileCoordinates;
@@ -300,14 +301,18 @@ export default class AStarPathFinding {
   }
 
   /**
-   * Calculates the distance between two tiles based on Euclidean or Manhattan distance.
-   * @param start
-   * @param finish
+   Calculates the distance between two tiles using the configured distance strategy.
+   @param start - The starting tile index
+   @param finish - The target tile index
+   @returns The calculated distance between the tiles
    */
   public calculateDistanceBetweenTwoTiles(start: number, finish: number): number {
     const startCoords = this.getCoordinatesFromTileValue(start);
     const finishCoords = this.getCoordinatesFromTileValue(finish);
 
+    if (!isNumber(startCoords.x) || !isNumber(startCoords.y) || !isNumber(finishCoords.x) || !isNumber(finishCoords.y)) {
+      throw new Error(`Invalid coordinates start(${startCoords.x} ${startCoords.y}) finish(${finishCoords.x} ${finishCoords.y})`);
+    }
     return this.distanceStrategy.calculate(startCoords, finishCoords);
   }
 
