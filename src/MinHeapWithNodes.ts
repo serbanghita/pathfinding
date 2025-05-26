@@ -41,7 +41,7 @@ export default class MinHeapWithNodes {
     // Add the node value to the "valueSet" in order to have O(1) access to the
     // "exiting value check" later.
     this.nodeValueSet.add(node.value);
-    this.bubbleUp(node, length - 1);
+    this.bubbleUp(length - 1);
   }
 
   public remove() {
@@ -58,15 +58,15 @@ export default class MinHeapWithNodes {
     }
 
     // Swap
-    this.bubbleDown(last, 0);
+    this.bubbleDown(0);
 
     return root;
   }
 
-  private bubbleDown(node: MinHeapNode, nodeIndex: number): void {
+  private bubbleDown(nodeIndex: number): void {
     while (true) {
       const leftChildIndex = nodeIndex * 2 + 1;
-      const rightChildIndex = leftChildIndex + 1;
+      const rightChildIndex = nodeIndex * 2 + 2;
 
       let smallest = nodeIndex;
 
@@ -84,26 +84,24 @@ export default class MinHeapWithNodes {
       [this.heap[nodeIndex], this.heap[smallest]] = [this.heap[smallest], this.heap[nodeIndex]];
       nodeIndex = smallest;
     }
-  } // test
+  }
 
-  private bubbleUp(node: MinHeapNode, nodeIndex: number): void {
+  private bubbleUp(nodeIndex: number): void {
     // If it's root node, then stop processing.
     if (nodeIndex === 0) {
       return;
     }
 
     const parentNodeIndex = nodeIndex > 2 ? Math.floor((nodeIndex - 1) / 2) : 0;
-    const parentNode = this.heap[parentNodeIndex];
 
-    if (node.cost >= parentNode.cost) {
+    if (this.heap[nodeIndex].cost >= this.heap[parentNodeIndex].cost) {
       return;
     }
 
     // Swap
-    this.heap[parentNodeIndex] = node;
-    this.heap[nodeIndex] = parentNode;
+    [this.heap[parentNodeIndex], this.heap[nodeIndex]] = [this.heap[nodeIndex], this.heap[parentNodeIndex]];
 
     // Repeat the process (until it's stopped).
-    this.bubbleUp(this.heap[parentNodeIndex], parentNodeIndex);
+    this.bubbleUp(parentNodeIndex);
   }
 }
