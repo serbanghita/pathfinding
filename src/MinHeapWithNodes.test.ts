@@ -3,82 +3,82 @@ import MinHeapWithNodes from "./MinHeapWithNodes.ts";
 describe("MinHeapWithNodes", () => {
   it("constructor", () => {
     const mh = new MinHeapWithNodes([
-      { value: 0x1, cost: 10 },
-      { value: 0x2, cost: 1 },
-      { value: 0x3, cost: 7 },
-      { value: 0x4, cost: 3 },
-      { value: 0x5, cost: 8 },
-      { value: 0x6, cost: 5 },
-      { value: 0x7, cost: 9 },
+      { value: 0x1, fCost: 10, hCost: 0, gCost: 0 },
+      { value: 0x2, fCost: 1, hCost: 0, gCost: 0 },
+      { value: 0x3, fCost: 7, hCost: 0, gCost: 0 },
+      { value: 0x4, fCost: 3, hCost: 0, gCost: 0 },
+      { value: 0x5, fCost: 8, hCost: 0, gCost: 0 },
+      { value: 0x6, fCost: 5, hCost: 0, gCost: 0 },
+      { value: 0x7, fCost: 9, hCost: 0, gCost: 0 },
     ]);
     expect(mh.heap).toEqual([
-      { value: 0x2, cost: 1 },
-      { value: 0x4, cost: 3 },
-      { value: 0x6, cost: 5 },
-      { value: 0x1, cost: 10 },
-      { value: 0x5, cost: 8 },
-      { value: 0x3, cost: 7 },
-      { value: 0x7, cost: 9 },
+      { value: 0x2, fCost: 1, hCost: 0, gCost: 0 },
+      { value: 0x4, fCost: 3, hCost: 0, gCost: 0 },
+      { value: 0x6, fCost: 5, hCost: 0, gCost: 0 },
+      { value: 0x1, fCost: 10, hCost: 0, gCost: 0 },
+      { value: 0x5, fCost: 8, hCost: 0, gCost: 0 },
+      { value: 0x3, fCost: 7, hCost: 0, gCost: 0 },
+      { value: 0x7, fCost: 9, hCost: 0, gCost: 0 },
     ]);
   });
 
   it("constructor - arr ordered", () => {
     const mh = new MinHeapWithNodes([
-      { value: 0x1, cost: 1 },
-      { value: 0x2, cost: 2 },
-      { value: 0x3, cost: 3 },
-      { value: 0x4, cost: 4 },
-      { value: 0x5, cost: 5 },
-      { value: 0x6, cost: 6 },
-      { value: 0x7, cost: 7 },
+      { value: 0x1, fCost: 1, hCost: 0, gCost: 0 },
+      { value: 0x2, fCost: 2, hCost: 0, gCost: 0 },
+      { value: 0x3, fCost: 3, hCost: 0, gCost: 0 },
+      { value: 0x4, fCost: 4, hCost: 0, gCost: 0 },
+      { value: 0x5, fCost: 5, hCost: 0, gCost: 0 },
+      { value: 0x6, fCost: 6, hCost: 0, gCost: 0 },
+      { value: 0x7, fCost: 7, hCost: 0, gCost: 0 },
     ]);
     expect(mh.heap).toEqual([
-      { value: 0x1, cost: 1 },
-      { value: 0x2, cost: 2 },
-      { value: 0x3, cost: 3 },
-      { value: 0x4, cost: 4 },
-      { value: 0x5, cost: 5 },
-      { value: 0x6, cost: 6 },
-      { value: 0x7, cost: 7 },
+      { value: 0x1, fCost: 1, hCost: 0, gCost: 0 },
+      { value: 0x2, fCost: 2, hCost: 0, gCost: 0 },
+      { value: 0x3, fCost: 3, hCost: 0, gCost: 0 },
+      { value: 0x4, fCost: 4, hCost: 0, gCost: 0 },
+      { value: 0x5, fCost: 5, hCost: 0, gCost: 0 },
+      { value: 0x6, fCost: 6, hCost: 0, gCost: 0 },
+      { value: 0x7, fCost: 7, hCost: 0, gCost: 0 },
     ]);
   });
 
   it("insert", () => {
     const mh = new MinHeapWithNodes([]);
-    mh.insert({ value: 0x1, cost: 1 });
-    expect(mh.heap).toEqual([{ value: 0x1, cost: 1 }]);
-    mh.insert({ value: 0x2, cost: 10 });
+    mh.insert({ value: 0x1, fCost: 1, hCost: 0, gCost: 0 });
+    expect(mh.heap).toEqual([{ value: 0x1, fCost: 1, hCost: 0, gCost: 0 }]);
+    mh.insert({ value: 0x2, fCost: 10, hCost: 0, gCost: 0 });
     expect(mh.heap).toEqual([
-      { value: 0x1, cost: 1 },
-      { value: 0x2, cost: 10 },
+      { value: 0x1, fCost: 1, hCost: 0, gCost: 0 },
+      { value: 0x2, fCost: 10, hCost: 0, gCost: 0 },
     ]);
-    mh.insert({ value: 0x3, cost: 5 });
+    mh.insert({ value: 0x3, fCost: 5, hCost: 0, gCost: 0 });
     expect(mh.heap).toEqual([
-      { value: 0x1, cost: 1 },
-      { value: 0x2, cost: 10 },
-      { value: 0x3, cost: 5 },
+      { value: 0x1, fCost: 1, hCost: 0, gCost: 0 },
+      { value: 0x2, fCost: 10, hCost: 0, gCost: 0 },
+      { value: 0x3, fCost: 5, hCost: 0, gCost: 0 },
     ]);
-    mh.insert({ value: 0x4, cost: 4 });
+    mh.insert({ value: 0x4, fCost: 4, hCost: 0, gCost: 0 });
     expect(mh.heap).toEqual([
-      { value: 0x1, cost: 1 },
-      { value: 0x4, cost: 4 },
-      { value: 0x3, cost: 5 },
-      { value: 0x2, cost: 10 },
+      { value: 0x1, fCost: 1, hCost: 0, gCost: 0 },
+      { value: 0x4, fCost: 4, hCost: 0, gCost: 0 },
+      { value: 0x3, fCost: 5, hCost: 0, gCost: 0 },
+      { value: 0x2, fCost: 10, hCost: 0, gCost: 0 },
     ]);
   });
 
   it("remove", () => {
     const mh = new MinHeapWithNodes([
-      { value: 0x1, cost: 1 },
-      { value: 0x2, cost: 10 },
-      { value: 0x3, cost: 5 },
-      { value: 0x4, cost: 4 },
+      { value: 0x1, fCost: 1, hCost: 0, gCost: 0 },
+      { value: 0x2, fCost: 10, hCost: 0, gCost: 0 },
+      { value: 0x3, fCost: 5, hCost: 0, gCost: 0 },
+      { value: 0x4, fCost: 4, hCost: 0, gCost: 0 },
     ]);
     mh.remove();
     expect(mh.heap).toEqual([
-      { value: 0x4, cost: 4 },
-      { value: 0x2, cost: 10 },
-      { value: 0x3, cost: 5 },
+      { value: 0x4, fCost: 4, hCost: 0, gCost: 0 },
+      { value: 0x2, fCost: 10, hCost: 0, gCost: 0 },
+      { value: 0x3, fCost: 5, hCost: 0, gCost: 0 },
     ]);
   });
 });
