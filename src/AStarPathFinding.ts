@@ -161,7 +161,6 @@ export default class AStarPathFinding {
 
     // Push the first "Start" tile in order to start searching.
     const hCost = this.calculateDistanceBetweenTwoTiles(this.startTileValue, this.finishTileValue);
-    // console.log("hCost", hCost);
     this.queue = new MinHeapWithNodes([{ value: this.startTileValue, hCost, gCost: 0, fCost: hCost }]);
     // Reset previously found path.
     this.path = [];
@@ -210,7 +209,7 @@ export default class AStarPathFinding {
     if (found) {
       this.status = AStarPathFindingSearchStatus.FOUND;
       this.queue.clear();
-      // console.log(this.cameFromTiles);
+
       if (this.resultType === AStarPathFindingResultType.WAYPOINT_PATH_ARRAY) {
         this.doBacktrackInflection(node);
       } else {
@@ -332,7 +331,6 @@ export default class AStarPathFinding {
       hCost = this.calculateDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
       gCost = node.gCost + 1;
       fCost = hCost + gCost;
-      // console.log("fCost", fCost);
 
       // Check out of bounds.
       if ((directionX === -1 && (futureTileValue + 1) % this.matrixWidth === 0) || (directionX === 1 && futureTileValue % this.matrixWidth === 0)) {
@@ -344,7 +342,6 @@ export default class AStarPathFinding {
       hCost = this.calculateDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
       gCost = node.gCost + 1;
       fCost = hCost + gCost;
-      // console.log("fCost", fCost);
     } else {
       return null;
     }
@@ -359,7 +356,6 @@ export default class AStarPathFinding {
 
     // Already visited?
     if (this.visitedTiles.has(futureTileValue)) {
-      console.log("already visited", futureTileValue);
       return null;
     }
 
