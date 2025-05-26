@@ -55,6 +55,8 @@ export default class AStarPathFinding {
   public visitedTiles: Set<number> = new Set();
   // Map<tile, cameFromTile>
   public cameFromTiles: Map<number, number> = new Map();
+  // Maps tileValue to best known gCost
+  private nodeCosts: Map<number, number> = new Map();
   // The path found on success.
   public path: number[] = [];
   private matrixWidth!: number;
@@ -158,7 +160,9 @@ export default class AStarPathFinding {
     this.finishTileValue = this.getTileValueFromCoordinates(config.finishCoordinates.x, config.finishCoordinates.y);
 
     // Push the first "Start" tile in order to start searching.
-    this.queue = new MinHeapWithNodes([{ value: this.startTileValue, cost: 0 }]);
+    const hCost = this.calculateDistanceBetweenTwoTiles(this.startTileValue, this.finishTileValue);
+    // console.log("hCost", hCost);
+    this.queue = new MinHeapWithNodes([{ value: this.startTileValue, hCost, gCost: 0, fCost: hCost }]);
     // Reset previously found path.
     this.path = [];
   }
@@ -318,13 +322,17 @@ export default class AStarPathFinding {
 
   private computeFutureTileValueAndCostFromDirection(node: MinHeapNode, [directionX, directionY]: [number, number]): MinHeapNode | null {
     let futureTileValue: number;
-    let futureCost: number;
+    let hCost: number;
+    let gCost: number;
+    let fCost: number;
 
     if (directionX !== 0) {
       futureTileValue = node.value + directionX;
       // Calculate this based on heuristic?
-      futureCost = this.calculateDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
-      // console.log("futureCost", futureCost);
+      hCost = this.calculateDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
+      gCost = node.gCost + 1;
+      fCost = hCost + gCost;
+      // console.log("fCost", fCost);
 
       // Check out of bounds.
       if ((directionX === -1 && (futureTileValue + 1) % this.matrixWidth === 0) || (directionX === 1 && futureTileValue % this.matrixWidth === 0)) {
@@ -333,14 +341,25 @@ export default class AStarPathFinding {
     } else if (directionY !== 0) {
       futureTileValue = node.value + directionY * this.matrixWidth;
       // Calculate this based on heuristic?
-      futureCost = this.calculateDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
-      // console.log("futureCost", futureCost);
+      hCost = this.calculateDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
+      gCost = node.gCost + 1;
+      fCost = hCost + gCost;
+      // console.log("fCost", fCost);
     } else {
       return null;
     }
 
+    // Check if we already have a better path to this node
+    const existingGCost = this.nodeCosts.get(futureTileValue) ?? Infinity;
+    if (gCost >= existingGCost) {
+      return null;
+    }
+    // Update the best known cost
+    this.nodeCosts.set(futureTileValue, gCost);
+
     // Already visited?
     if (this.visitedTiles.has(futureTileValue)) {
+      console.log("already visited", futureTileValue);
       return null;
     }
 
@@ -355,6 +374,6 @@ export default class AStarPathFinding {
     }
 
     // new MinHeapNode
-    return { value: futureTileValue, cost: futureCost };
+    return { value: futureTileValue, hCost: hCost, gCost, fCost };
   }
 }
