@@ -1,6 +1,11 @@
 export type MinHeapNode = {
   value: number;
-  cost: number;
+  // Heuristic cost (Manhattan/Euclidean/etc). This is the cost from this node to this goal node.
+  hCost: number;
+  // Cost from the start.
+  gCost: number;
+  // f = g + h (MinHeap should care about this)
+  fCost: number;
 };
 
 /**
@@ -70,11 +75,19 @@ export default class MinHeapWithNodes {
 
       let smallest = nodeIndex;
 
-      if (leftChildIndex < this.heap.length && this.heap[leftChildIndex].cost < this.heap[smallest].cost) {
+      if (
+        leftChildIndex < this.heap.length &&
+        (this.heap[leftChildIndex].fCost < this.heap[smallest].fCost ||
+          (this.heap[leftChildIndex].fCost === this.heap[smallest].fCost && this.heap[leftChildIndex].hCost < this.heap[smallest].hCost))
+      ) {
         smallest = leftChildIndex;
       }
 
-      if (rightChildIndex < this.heap.length && this.heap[rightChildIndex].cost < this.heap[smallest].cost) {
+      if (
+        rightChildIndex < this.heap.length &&
+        (this.heap[rightChildIndex].fCost < this.heap[smallest].fCost ||
+          (this.heap[rightChildIndex].fCost === this.heap[smallest].fCost && this.heap[rightChildIndex].hCost < this.heap[smallest].hCost))
+      ) {
         smallest = rightChildIndex;
       }
 
@@ -94,7 +107,7 @@ export default class MinHeapWithNodes {
 
     const parentNodeIndex = nodeIndex > 2 ? Math.floor((nodeIndex - 1) / 2) : 0;
 
-    if (this.heap[nodeIndex].cost >= this.heap[parentNodeIndex].cost) {
+    if (this.heap[nodeIndex].fCost >= this.heap[parentNodeIndex].fCost) {
       return;
     }
 
