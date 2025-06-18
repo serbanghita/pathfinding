@@ -1,0 +1,6 @@
+# https://developers.google.com/gemini-code-assist/docs/create-aiexclude-file#intellij
+
+resources
+.husky
+.github
+src/*.test.ts
