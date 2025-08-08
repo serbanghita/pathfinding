@@ -77,16 +77,16 @@ export default class MinHeapWithNodes {
 
       if (
         leftChildIndex < this.heap.length &&
-        (this.heap[leftChildIndex].fCost < this.heap[smallest].fCost ||
-          (this.heap[leftChildIndex].fCost === this.heap[smallest].fCost && this.heap[leftChildIndex].hCost < this.heap[smallest].hCost))
+        this.heap[leftChildIndex].fCost < this.heap[smallest].fCost /* ||
+          (this.heap[leftChildIndex].fCost === this.heap[smallest].fCost && this.heap[leftChildIndex].hCost < this.heap[smallest].hCost)*/
       ) {
         smallest = leftChildIndex;
       }
 
       if (
         rightChildIndex < this.heap.length &&
-        (this.heap[rightChildIndex].fCost < this.heap[smallest].fCost ||
-          (this.heap[rightChildIndex].fCost === this.heap[smallest].fCost && this.heap[rightChildIndex].hCost < this.heap[smallest].hCost))
+        this.heap[rightChildIndex].fCost < this.heap[smallest].fCost /* ||
+          (this.heap[rightChildIndex].fCost === this.heap[smallest].fCost && this.heap[rightChildIndex].hCost < this.heap[smallest].hCost)*/
       ) {
         smallest = rightChildIndex;
       }
