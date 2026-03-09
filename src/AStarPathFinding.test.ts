@@ -305,6 +305,46 @@ describe("AStarPathFinding", () => {
     });
   });
 
+  describe("init() reuse - clears stale state", () => {
+    test("calling init() twice on the same instance produces correct results", () => {
+      const matrix2D = [
+        [0, 1, 0, 0, 0],
+        [0, 1, 0, 1, 0],
+        [0, 0, 0, 1, 0],
+      ];
+
+      const aStar = new AStarPathFinding({
+        matrix2D,
+        searchType: AStarPathFindingSearchType.CONTINUOUS,
+        startCoordinates: { x: 0, y: 0 },
+        finishCoordinates: { x: 4, y: 2 },
+      });
+
+      const result1 = aStar.search();
+      expect(result1).toBe(true);
+      const path1 = [...aStar.path];
+      expect(path1.length).toBeGreaterThan(0);
+
+      // Re-init with a different search on the same instance
+      aStar.init({
+        matrix2D,
+        searchType: AStarPathFindingSearchType.CONTINUOUS,
+        startCoordinates: { x: 0, y: 2 },
+        finishCoordinates: { x: 2, y: 0 },
+      });
+
+      // State should be clean
+      expect(aStar.visitedTiles.size).toBe(0);
+      expect(aStar.cameFromTiles.size).toBe(0);
+      expect(aStar.path.length).toBe(0);
+
+      const result2 = aStar.search();
+      expect(result2).toBe(true);
+      expect(aStar.path[0]).toBe(10); // start tile (0,2)
+      expect(aStar.path[aStar.path.length - 1]).toBe(2); // end tile (2,0)
+    });
+  });
+
   describe("internal functions", () => {
     describe("20x15 matrix", () => {
       let aStar: AStarPathFinding;

@@ -103,6 +103,9 @@ export default class AStarPathFinding {
 
   public init(config: AStarPathFindingInit): void {
     this.status = AStarPathFindingSearchStatus.INIT;
+    this.visitedTiles.clear();
+    this.cameFromTiles.clear();
+    this.nodeCosts.clear();
 
     if (config.matrix2D) {
       this.checkMatrix2D(config);
@@ -252,17 +255,44 @@ export default class AStarPathFinding {
     let lastAdded: number = node.value;
     const path: number[] = [current];
 
+    let lastDirectionX: string = "none";
+    let lastDirectionY: string = "none";
+
+    let directionX: string = "none";
+    let directionY: string = "none";
+
     while (this.cameFromTiles.has(current)) {
       const cameFrom: number = this.cameFromTiles.get(current) as number;
 
       const cameFromXY = this.getCoordinatesFromTileValue(cameFrom);
       const lastAddedXY = this.getCoordinatesFromTileValue(lastAdded);
+
+      if (lastAddedXY.x > cameFromXY.x) {
+        directionX = "right";
+      } else if (lastAddedXY.x < cameFromXY.x) {
+        directionX = "left";
+      } else {
+        directionX = "none";
+      }
+
+      if (lastAddedXY.y > cameFromXY.y) {
+        directionY = "down";
+      } else if (lastAddedXY.y < cameFromXY.y) {
+        directionY = "up";
+      } else {
+        directionY = "none";
+      }
+
+      // console.log(cameFromXY, lastAddedXY, directionX, directionY);
+
       // Check if the current tile has changed direction (row or column).
-      if (cameFromXY.x !== lastAddedXY.x && cameFromXY.y !== lastAddedXY.y) {
+      if (directionX !== lastDirectionX || directionY !== lastDirectionY) {
         lastAdded = cameFrom;
         path.unshift(current);
       }
       current = cameFrom;
+      lastDirectionX = directionX;
+      lastDirectionY = directionY;
     }
 
     // Add the starting tile.
@@ -328,8 +358,11 @@ export default class AStarPathFinding {
     if (directionX !== 0) {
       futureTileValue = node.value + directionX;
       // Calculate this based on heuristic?
+      // Heuristic cost from this node to goal.
       hCost = this.calculateDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
+      // Actual cost from start to this node.
       gCost = node.gCost + 1;
+      // Total cost (gCost + hCost)
       fCost = hCost + gCost;
 
       // Check out of bounds.
@@ -339,8 +372,11 @@ export default class AStarPathFinding {
     } else if (directionY !== 0) {
       futureTileValue = node.value + directionY * this.matrixWidth;
       // Calculate this based on heuristic?
+      // Heuristic cost from this node to goal.
       hCost = this.calculateDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
+      // Actual cost from start to this node.
       gCost = node.gCost + 1;
+      // Total cost (gCost + hCost)
       fCost = hCost + gCost;
     } else {
       return null;
