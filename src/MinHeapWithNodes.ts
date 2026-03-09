@@ -29,6 +29,7 @@ export default class MinHeapWithNodes {
 
   public clear() {
     this.heap = [];
+    this.nodeValueSet.clear();
   }
 
   public includes(nodeValue: number): boolean {

@@ -67,6 +67,26 @@ describe("MinHeapWithNodes", () => {
     ]);
   });
 
+  it("clear - clears both heap and nodeValueSet", () => {
+    const mh = new MinHeapWithNodes([
+      { value: 0x1, fCost: 1, hCost: 0, gCost: 0 },
+      { value: 0x2, fCost: 10, hCost: 0, gCost: 0 },
+      { value: 0x3, fCost: 5, hCost: 0, gCost: 0 },
+    ]);
+    expect(mh.heap.length).toBe(3);
+    expect(mh.includes(0x1)).toBe(true);
+    expect(mh.includes(0x2)).toBe(true);
+    expect(mh.includes(0x3)).toBe(true);
+
+    mh.clear();
+
+    expect(mh.heap.length).toBe(0);
+    expect(mh.size).toBe(0);
+    expect(mh.includes(0x1)).toBe(false);
+    expect(mh.includes(0x2)).toBe(false);
+    expect(mh.includes(0x3)).toBe(false);
+  });
+
   it("remove", () => {
     const mh = new MinHeapWithNodes([
       { value: 0x1, fCost: 1, hCost: 0, gCost: 0 },
