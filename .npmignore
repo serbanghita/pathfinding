@@ -1,0 +1,21 @@
+# Dev/build tooling
+.aiexclude
+.editorconfig
+.husky/
+.prettierrc
+.prettierignore
+eslint.config.mjs
+tsconfig.json
+vite.config.ts
+
+# Tests & benchmarks
+src/**/*.test.ts
+src/**/*.bench.ts
+
+# CI & docs
+.github/
+CLAUDE.md
+resources/
+
+# Coverage
+.coverage/
