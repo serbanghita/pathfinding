@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-04-16
+
 ### Fixed
 
 - Heap now prioritizes nodes based on fCost (gCost + hCost) instead of just gCost
