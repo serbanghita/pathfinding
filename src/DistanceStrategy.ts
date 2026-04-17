@@ -6,7 +6,9 @@ export interface DistanceStrategy {
 
 export class EuclideanDistance implements DistanceStrategy {
   public calculate(start: MatrixTileCoordinates, finish: MatrixTileCoordinates): number {
-    return Math.sqrt(Math.pow(start.x - finish.x, 2) + Math.pow(start.y - finish.y, 2));
+    const dx = start.x - finish.x;
+    const dy = start.y - finish.y;
+    return Math.sqrt(dx * dx + dy * dy);
   }
 }
 

@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-04-17
+
+### Changed
+
+- Inlined direction math in the search hot path and removed the per-step coordinate round-trip through `calculateDistanceBetweenTwoTiles`
+- Replaced repeated `path.unshift` with `push` + single `reverse` when reconstructing paths
+- Iterative `bubbleUp` and skip `bubbleDown` when the heap is empty after pop
+- Skip stale duplicate entries in the heap after pop instead of re-visiting them
+- Removed dead fields (`matrix2D`, `matrixSize`, `startCoordinates`, `finishCoordinates`) and the `visit()` helper
+- Cached `dx`/`dy` in `EuclideanDistance` and swapped `reduce` + spread for `Array.prototype.flat` when flattening 2D matrices
+
+### Chore
+
+- `npm audit fix` to drop vulnerable `brace-expansion` transitive dependency
+
 ## [0.2.0] - 2026-04-16
 
 ### Fixed

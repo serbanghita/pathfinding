@@ -1,13 +1,8 @@
 import MinHeapWithNodes, { MinHeapNode } from "./MinHeapWithNodes.ts";
 import { DistanceStrategy, ManhattanDistance } from "./DistanceStrategy.ts";
-import { isNumber } from "./utils.ts";
 
-const directions: [number, number][] = [
-  [-1, 0], // left
-  [1, 0], // right
-  [0, -1], // top
-  [0, 1], // bottom
-];
+const DIRECTIONS_X = [-1, 1, 0, 0];
+const DIRECTIONS_Y = [0, 0, -1, 1];
 
 export enum AStarPathFindingSearchType {
   CONTINUOUS = 0x1,
@@ -61,16 +56,13 @@ export default class AStarPathFinding {
   public path: number[] = [];
   private matrixWidth!: number;
   private matrixHeight!: number;
-  private matrix2D: number[][] = [];
   private matrix1D: number[] = [];
-  private matrixSize!: number;
   private searchType: AStarPathFindingSearchType = AStarPathFindingSearchType.CONTINUOUS;
   private resultType: AStarPathFindingResultType = AStarPathFindingResultType.FULL_PATH_ARRAY;
   private distanceStrategy: DistanceStrategy = new ManhattanDistance();
-  private startCoordinates!: MatrixTileCoordinates;
   public startTileValue!: number;
-  private finishCoordinates!: MatrixTileCoordinates;
   public finishTileValue!: number;
+  private finishCoords!: MatrixTileCoordinates;
   public status: AStarPathFindingSearchStatus = AStarPathFindingSearchStatus.INIT;
   private onInsertQueue: (node: MinHeapNode) => void = () => undefined;
   private onSuccess: (foundPath: number[]) => void = () => undefined;
@@ -109,7 +101,7 @@ export default class AStarPathFinding {
 
     if (config.matrix2D) {
       this.checkMatrix2D(config);
-      this.matrix1D = config.matrix2D.reduce((acc, row) => [...acc, ...row], []);
+      this.matrix1D = config.matrix2D.flat();
       this.matrixWidth = config.matrix2D[0]?.length;
       this.matrixHeight = config.matrix2D.length;
     } else if (config.matrix1D) {
@@ -120,8 +112,6 @@ export default class AStarPathFinding {
     } else {
       throw new Error(`No matrix has been defined.`);
     }
-
-    this.matrixSize = this.matrixWidth * this.matrixHeight;
 
     if (config.searchType) {
       this.searchType = config.searchType;
@@ -157,22 +147,15 @@ export default class AStarPathFinding {
       );
     }
 
-    this.startCoordinates = config.startCoordinates;
     this.startTileValue = this.getTileValueFromCoordinates(config.startCoordinates.x, config.startCoordinates.y);
-    this.finishCoordinates = config.finishCoordinates;
     this.finishTileValue = this.getTileValueFromCoordinates(config.finishCoordinates.x, config.finishCoordinates.y);
+    this.finishCoords = { x: config.finishCoordinates.x, y: config.finishCoordinates.y };
 
     // Push the first "Start" tile in order to start searching.
     const hCost = this.calculateDistanceBetweenTwoTiles(this.startTileValue, this.finishTileValue);
     this.queue = new MinHeapWithNodes([{ value: this.startTileValue, hCost, gCost: 0, fCost: hCost }]);
     // Reset previously found path.
     this.path = [];
-  }
-
-  private visit(node: MinHeapNode): boolean {
-    this.visitedTiles.add(node.value);
-
-    return node.value === this.finishTileValue;
   }
 
   /**
@@ -207,9 +190,14 @@ export default class AStarPathFinding {
 
   private doSearch(): boolean {
     const node = this.queue.remove();
-    const found = this.visit(node);
 
-    if (found) {
+    // Skip stale duplicates left in the heap by an earlier cheaper discovery.
+    if (this.visitedTiles.has(node.value)) {
+      return false;
+    }
+    this.visitedTiles.add(node.value);
+
+    if (node.value === this.finishTileValue) {
       this.status = AStarPathFindingSearchStatus.FOUND;
       this.queue.clear();
 
@@ -222,17 +210,17 @@ export default class AStarPathFinding {
       return true;
     }
 
-    // For each direction, plan to visit respective tile.
-    directions.forEach((direction) => {
-      const futureNode = this.computeFutureTileValueAndCostFromDirection(node, direction);
+    const nodeX = node.value % this.matrixWidth;
+    const nodeY = (node.value - nodeX) / this.matrixWidth;
 
-      if (futureNode !== null && !this.queue.includes(futureNode.value) && futureNode.value !== node.value) {
+    for (let i = 0; i < 4; i++) {
+      const futureNode = this.computeFutureNode(node, nodeX, nodeY, DIRECTIONS_X[i], DIRECTIONS_Y[i]);
+      if (futureNode !== null) {
         this.queue.insert(futureNode);
         this.cameFromTiles.set(futureNode.value, node.value);
-
         this.onInsertQueue(futureNode);
       }
-    });
+    }
 
     return false;
   }
@@ -243,10 +231,11 @@ export default class AStarPathFinding {
 
     while (this.cameFromTiles.has(current)) {
       const cameFrom: number = this.cameFromTiles.get(current) as number;
-      path.unshift(cameFrom);
+      path.push(cameFrom);
       current = cameFrom;
     }
 
+    path.reverse();
     this.path = path;
   }
 
@@ -288,7 +277,7 @@ export default class AStarPathFinding {
       // Check if the current tile has changed direction (row or column).
       if (directionX !== lastDirectionX || directionY !== lastDirectionY) {
         lastAdded = cameFrom;
-        path.unshift(current);
+        path.push(current);
       }
       current = cameFrom;
       lastDirectionX = directionX;
@@ -296,8 +285,9 @@ export default class AStarPathFinding {
     }
 
     // Add the starting tile.
-    path.unshift(current);
+    path.push(current);
 
+    path.reverse();
     this.path = path;
   }
 
@@ -340,72 +330,36 @@ export default class AStarPathFinding {
    @returns The calculated distance between the tiles
    */
   public calculateDistanceBetweenTwoTiles(start: number, finish: number): number {
-    const startCoords = this.getCoordinatesFromTileValue(start);
-    const finishCoords = this.getCoordinatesFromTileValue(finish);
-
-    if (!isNumber(startCoords.x) || !isNumber(startCoords.y) || !isNumber(finishCoords.x) || !isNumber(finishCoords.y)) {
-      throw new Error(`Invalid coordinates start(${startCoords.x} ${startCoords.y}) finish(${finishCoords.x} ${finishCoords.y})`);
-    }
-    return this.distanceStrategy.calculate(startCoords, finishCoords);
+    return this.distanceStrategy.calculate(this.getCoordinatesFromTileValue(start), this.getCoordinatesFromTileValue(finish));
   }
 
-  private computeFutureTileValueAndCostFromDirection(node: MinHeapNode, [directionX, directionY]: [number, number]): MinHeapNode | null {
-    let futureTileValue: number;
-    let hCost: number;
-    let gCost: number;
-    let fCost: number;
+  private computeFutureNode(node: MinHeapNode, nodeX: number, nodeY: number, dx: number, dy: number): MinHeapNode | null {
+    const newX = nodeX + dx;
+    const newY = nodeY + dy;
 
-    if (directionX !== 0) {
-      futureTileValue = node.value + directionX;
-      // Calculate this based on heuristic?
-      // Heuristic cost from this node to goal.
-      hCost = this.calculateDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
-      // Actual cost from start to this node.
-      gCost = node.gCost + 1;
-      // Total cost (gCost + hCost)
-      fCost = hCost + gCost;
-
-      // Check out of bounds.
-      if ((directionX === -1 && (futureTileValue + 1) % this.matrixWidth === 0) || (directionX === 1 && futureTileValue % this.matrixWidth === 0)) {
-        return null;
-      }
-    } else if (directionY !== 0) {
-      futureTileValue = node.value + directionY * this.matrixWidth;
-      // Calculate this based on heuristic?
-      // Heuristic cost from this node to goal.
-      hCost = this.calculateDistanceBetweenTwoTiles(futureTileValue, this.finishTileValue);
-      // Actual cost from start to this node.
-      gCost = node.gCost + 1;
-      // Total cost (gCost + hCost)
-      fCost = hCost + gCost;
-    } else {
+    if (newX < 0 || newX >= this.matrixWidth || newY < 0 || newY >= this.matrixHeight) {
       return null;
     }
 
-    // Check if we already have a better path to this node
-    const existingGCost = this.nodeCosts.get(futureTileValue) ?? Infinity;
-    if (gCost >= existingGCost) {
-      return null;
-    }
-    // Update the best known cost
-    this.nodeCosts.set(futureTileValue, gCost);
+    const futureTileValue = newX + newY * this.matrixWidth;
 
-    // Already visited?
-    if (this.visitedTiles.has(futureTileValue)) {
-      return null;
-    }
-
-    // Out of matrix bounds.
-    if (futureTileValue < 0 || futureTileValue > this.matrixSize - 1) {
-      return null;
-    }
-
-    // Check if it's blocked. This can be custom fn.
     if (this.matrix1D[futureTileValue] > 0) {
       return null;
     }
 
-    // new MinHeapNode
-    return { value: futureTileValue, hCost: hCost, gCost, fCost };
+    if (this.visitedTiles.has(futureTileValue)) {
+      return null;
+    }
+
+    const gCost = node.gCost + 1;
+    const existingGCost = this.nodeCosts.get(futureTileValue);
+    if (existingGCost !== undefined && gCost >= existingGCost) {
+      return null;
+    }
+    this.nodeCosts.set(futureTileValue, gCost);
+
+    const hCost = this.distanceStrategy.calculate({ x: newX, y: newY }, this.finishCoords);
+
+    return { value: futureTileValue, hCost, gCost, fCost: gCost + hCost };
   }
 }

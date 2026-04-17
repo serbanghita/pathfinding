@@ -51,20 +51,15 @@ export default class MinHeapWithNodes {
   }
 
   public remove() {
-    // Place the root element in a var to return later.
     const root = this.heap[0];
-    const last = this.heap.splice(-1, 1)[0];
+    const last = this.heap.pop() as MinHeapNode;
 
-    // Delete the value from the "valueSet" so we don't falsely report it in "include" fn.
     this.nodeValueSet.delete(root.value);
 
     if (this.heap.length > 0) {
-      // Remove the last element in the deepest level and move it to the root.
       this.heap[0] = last;
+      this.bubbleDown(0);
     }
-
-    // Swap
-    this.bubbleDown(0);
 
     return root;
   }
@@ -101,21 +96,15 @@ export default class MinHeapWithNodes {
   }
 
   private bubbleUp(nodeIndex: number): void {
-    // If it's root node, then stop processing.
-    if (nodeIndex === 0) {
-      return;
+    while (nodeIndex > 0) {
+      const parentNodeIndex = (nodeIndex - 1) >> 1;
+
+      if (this.heap[nodeIndex].fCost >= this.heap[parentNodeIndex].fCost) {
+        return;
+      }
+
+      [this.heap[parentNodeIndex], this.heap[nodeIndex]] = [this.heap[nodeIndex], this.heap[parentNodeIndex]];
+      nodeIndex = parentNodeIndex;
     }
-
-    const parentNodeIndex = nodeIndex > 2 ? Math.floor((nodeIndex - 1) / 2) : 0;
-
-    if (this.heap[nodeIndex].fCost >= this.heap[parentNodeIndex].fCost) {
-      return;
-    }
-
-    // Swap
-    [this.heap[parentNodeIndex], this.heap[nodeIndex]] = [this.heap[nodeIndex], this.heap[parentNodeIndex]];
-
-    // Repeat the process (until it's stopped).
-    this.bubbleUp(parentNodeIndex);
   }
 }
