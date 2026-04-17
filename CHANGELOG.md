@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-04-17
+
+### Fixed
+
+- Exclude `.idea/` and `.claude/` directories from published tarball
+
 ## [0.2.1] - 2026-04-17
 
 ### Changed

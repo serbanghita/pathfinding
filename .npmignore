@@ -8,6 +8,11 @@ eslint.config.mjs
 tsconfig.json
 vite.config.ts
 
+# IDE / editor metadata
+.idea/
+.claude/
+.vscode/
+
 # Tests & benchmarks
 src/**/*.test.ts
 src/**/*.bench.ts
