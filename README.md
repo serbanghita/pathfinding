@@ -1,5 +1,7 @@
 # Pathfinding
 
+[![build](https://github.com/serbanghita/pathfinding/actions/workflows/node.js.yml/badge.svg?branch=main)](https://github.com/serbanghita/pathfinding/actions/workflows/node.js.yml)
+
 > Pathfinding library that implements A\* with Euclidean distance.  
 > On success it can return the full backtracked path or only the waypoints.
 
