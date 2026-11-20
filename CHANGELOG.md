@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-11-20
+
+### Fixed
+
+- `MinHeapWithNodes` now breaks `fCost` ties by smaller `hCost` in both `bubbleUp` and `bubbleDown`. The tie-breaker described in 0.2.0 was commented out, so A\* with the default `ManhattanDistance` explored most of an open area before reaching the goal. On a 1000x1000 open grid, visited tiles drop from 553,727 to 1,999
+
+### Changed
+
+- On open maps the returned path can follow different tiles than before (same length, still shortest), because ties are now resolved toward the goal
+- Exclude `.gemini/`, `.planning/` and review notes from published tarball
+
+## [0.2.3] - 2026-11-20
+
+### Fixed
+
+- `MinHeapWithNodes` now breaks `fCost` ties by smaller `hCost` in both `bubbleUp` and `bubbleDown`. The tie-breaker described in 0.2.0 was commented out, so A\* with the default `ManhattanDistance` explored most of an open area before reaching the goal. On a 1000x1000 open grid, visited tiles drop from 553,727 to 1,999
+
+### Changed
+
+- On open maps the returned path can follow different tiles than before (same length, still shortest), because ties are now resolved toward the goal
+- Exclude `.gemini/`, `.planning/` and review notes from published tarball
+
 ## [0.2.2] - 2026-04-17
 
 ### Fixed

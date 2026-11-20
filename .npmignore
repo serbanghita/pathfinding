@@ -13,6 +13,18 @@ vite.config.ts
 .claude/
 .vscode/
 
+# AI tooling, plans and review notes
+.gemini/
+.planning/
+claude-review-*.md
+copilot-review-*.md
+
+# AI tooling, plans and review notes
+.gemini/
+.planning/
+claude-review-*.md
+copilot-review-*.md
+
 # Tests & benchmarks
 src/**/*.test.ts
 src/**/*.bench.ts
