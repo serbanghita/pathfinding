@@ -1,6 +1,10 @@
 # Pathfinding
 
+[![npm version](https://img.shields.io/npm/v/@serbanghita-gamedev/pathfinding)](https://www.npmjs.com/package/@serbanghita-gamedev/pathfinding)
 [![build](https://github.com/serbanghita/pathfinding/actions/workflows/node.js.yml/badge.svg?branch=main)](https://github.com/serbanghita/pathfinding/actions/workflows/node.js.yml)
+[![license](https://img.shields.io/npm/l/@serbanghita-gamedev/pathfinding)](./LICENSE)
+[![zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](./package.json)
+[![npm downloads](https://img.shields.io/npm/dm/@serbanghita-gamedev/pathfinding)](https://www.npmjs.com/package/@serbanghita-gamedev/pathfinding)
 
 > Pathfinding library that implements A\* with Euclidean distance.  
 > On success it can return the full backtracked path or only the waypoints.
