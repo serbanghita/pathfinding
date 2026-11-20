@@ -1,4 +1,4 @@
-import AStarPathFinding, { AStarPathFindingSearchType } from "./AStarPathFinding.ts";
+import AStarPathFinding, { AStarPathFindingSearchStatus, AStarPathFindingSearchType } from "./AStarPathFinding.ts";
 
 describe("AStarPathFinding", () => {
   describe("constructor", () => {
@@ -342,6 +342,48 @@ describe("AStarPathFinding", () => {
       expect(result2).toBe(true);
       expect(aStar.path[0]).toBe(10); // start tile (0,2)
       expect(aStar.path[aStar.path.length - 1]).toBe(2); // end tile (2,0)
+    });
+  });
+
+  describe("search - 100x100 open grid", () => {
+    test("CONTINUOUS - visits only the tiles on the path", () => {
+      const aStar = new AStarPathFinding({
+        matrix1D: new Array(10000).fill(0),
+        matrixWidth: 100,
+        matrixHeight: 100,
+        searchType: AStarPathFindingSearchType.CONTINUOUS,
+        startCoordinates: { x: 0, y: 0 },
+        finishCoordinates: { x: 99, y: 99 },
+      });
+
+      const result = aStar.search();
+
+      expect(result).toBe(true);
+      expect(aStar.path.length).toBe(199);
+      expect(aStar.visitedTiles.size).toBe(199);
+    });
+
+    test("BY_STEP - visits only the tiles on the path", () => {
+      const aStar = new AStarPathFinding({
+        matrix1D: new Array(10000).fill(0),
+        matrixWidth: 100,
+        matrixHeight: 100,
+        searchType: AStarPathFindingSearchType.BY_STEP,
+        startCoordinates: { x: 0, y: 0 },
+        finishCoordinates: { x: 99, y: 99 },
+      });
+
+      let found = false;
+      let calls = 0;
+      while (!found && calls < 10000) {
+        found = aStar.search();
+        calls++;
+      }
+
+      expect(found).toBe(true);
+      expect(calls).toBe(199);
+      expect(aStar.visitedTiles.size).toBe(199);
+      expect(aStar.status).toBe(AStarPathFindingSearchStatus.FOUND);
     });
   });
 

@@ -64,6 +64,10 @@ export default class MinHeapWithNodes {
     return root;
   }
 
+  private static hasHigherPriority(a: MinHeapNode, b: MinHeapNode): boolean {
+    return a.fCost < b.fCost || (a.fCost === b.fCost && a.hCost < b.hCost);
+  }
+
   private bubbleDown(nodeIndex: number): void {
     while (true) {
       const leftChildIndex = nodeIndex * 2 + 1;
@@ -71,19 +75,11 @@ export default class MinHeapWithNodes {
 
       let smallest = nodeIndex;
 
-      if (
-        leftChildIndex < this.heap.length &&
-        this.heap[leftChildIndex].fCost < this.heap[smallest].fCost /* ||
-          (this.heap[leftChildIndex].fCost === this.heap[smallest].fCost && this.heap[leftChildIndex].hCost < this.heap[smallest].hCost)*/
-      ) {
+      if (leftChildIndex < this.heap.length && MinHeapWithNodes.hasHigherPriority(this.heap[leftChildIndex], this.heap[smallest])) {
         smallest = leftChildIndex;
       }
 
-      if (
-        rightChildIndex < this.heap.length &&
-        this.heap[rightChildIndex].fCost < this.heap[smallest].fCost /* ||
-          (this.heap[rightChildIndex].fCost === this.heap[smallest].fCost && this.heap[rightChildIndex].hCost < this.heap[smallest].hCost)*/
-      ) {
+      if (rightChildIndex < this.heap.length && MinHeapWithNodes.hasHigherPriority(this.heap[rightChildIndex], this.heap[smallest])) {
         smallest = rightChildIndex;
       }
 
@@ -99,7 +95,7 @@ export default class MinHeapWithNodes {
     while (nodeIndex > 0) {
       const parentNodeIndex = (nodeIndex - 1) >> 1;
 
-      if (this.heap[nodeIndex].fCost >= this.heap[parentNodeIndex].fCost) {
+      if (!MinHeapWithNodes.hasHigherPriority(this.heap[nodeIndex], this.heap[parentNodeIndex])) {
         return;
       }
 
